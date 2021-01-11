@@ -38,19 +38,6 @@ lsoas <- lsoas %>%
 
 qtm(lsoas)
 
-#Load UK Boundaries and filter London
-londonOutline <- st_read(here("Data","gadm36_GBR_gpkg", "gadm36_GBR.gpkg"), 
-                      layer='gadm36_GBR_2')%>%
-  filter(NAME_2=='Greater London')
-
-#Reprojected London
-londonOutline <- londonOutline%>%
-  st_set_crs(., 4326)
-
-londonOutline <- londonOutline%>%
-  st_transform(.,27700)
-
-
 #Load csv files of Accessibility Analysis
 ptal <- read_csv(here::here("Data","PTAL_2015.csv"),
                  locale = locale(encoding = "latin1"),
@@ -75,19 +62,6 @@ ptal<-ptal%>%
   st_as_sf(.,coords = c("X", "Y"), 
            crs =27700, 
            agr = "constant")
-
-#Distribution of all points in London
-tmap_mode("view")
-tm_shape(londonOutline) +
-  tm_polygons(col = "black", alpha = 0.5)+
-  tm_shape(ptal) +
-  tm_dots(shape=15, col = "PTAL2015",alpha = 0.5)
-  
-#Verify distribution of AI in London all points
-tm_shape(londonOutline) +
-  tm_polygons(col = "black", alpha = 0.5) +
-  tm_shape(ptal) +
-  tm_dots(shape=15, col = "AI2015",alpha = 0.5)
 
 #Distribution of PTAL across London
 ggplot(ptal, aes(x = PTAL2015))  +
